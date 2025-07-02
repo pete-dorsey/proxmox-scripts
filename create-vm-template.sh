@@ -2,18 +2,18 @@
 
 # This script creates a VM template for a specific operating system.
 
-if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 vm_id vm_name image_file"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 vm_id image_file"
     exit 1
 fi
 
 vm_id=$1
 image_file=$2
-vm_name=$(echo "${image_file}" | sed -e 's/\.img$//' -e 's/\.qcow2$//')
+vm_name=$(basename "${image_file}" | sed -e 's/\.img$//' -e 's/\.qcow2$//')
 
-qm create "${vm_id}" --memory 2048 --core 2 --name "${vm_name}" --net0 virtio,bridge=vmbr0,mtu=1
+qm create "${vm_id}" --memory 2048 --core 2 --net0 virtio,bridge=vmbr0,mtu=1 --name "${vm_name}"
 qm importdisk "${vm_id}" "${image_file}" local-lvm
-qm set "${vm_id}" --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-8102-disk-0,ssd=1
+qm set "${vm_id}" --scsihw virtio-scsi-pci --scsi0 local-lvm:vm-${vm_id}-disk-0,ssd=1
 qm set "${vm_id}" --ide2 local-lvm:cloudinit
 qm set "${vm_id}" --boot c --bootdisk scsi0
 qm set "${vm_id}" --serial0 socket --vga serial0
