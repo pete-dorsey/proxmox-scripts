@@ -22,5 +22,8 @@ id="${vma[0]}"
 name="${vma[1]}"
 mac="${vma[2]}"
 echo $id $name $mac
-qm clone $vm_template $id --full 1 --name $name
+qm clone ${vm_template} ${id} --full 1 --name ${name}
+qm set ${id} --net0 virtio=${mac},bridge=vmbr0,mtu=1
+qm resize ${id} scsi0 +20G
+qm start ${id}
 done
