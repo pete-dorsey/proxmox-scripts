@@ -8,8 +8,8 @@ if [ "$#" -ne 3 ]; then
 fi
 
 vm_id=$1
-vm_name=$2
-image_file=$3
+image_file=$2
+vm_name=$(echo "${image_file}" | sed -e 's/\.img$//' -e 's/\.qcow2$//')
 
 qm create "${vm_id}" --memory 2048 --core 2 --name "${vm_name}" --net0 virtio,bridge=vmbr0,mtu=1
 qm importdisk "${vm_id}" "${image_file}" local-lvm
